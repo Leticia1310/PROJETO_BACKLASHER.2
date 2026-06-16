@@ -19,10 +19,32 @@ public class ProfissionalController {
     public List<Profissional> listar() {
         return repository.findAll();
     }
-
+    @GetMapping("/{id}")
+    public ResponseEntity<Profissional> buscar(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(profissional -> ResponseEntity.ok(profissional))
+                .orElse(ResponseEntity.notFound().build());
+    }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Profissional criar(@RequestBody Profissional profissional) {
         return repository.save(profissional);
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<Profissional> atualizar(@PathVariable Long id, @RequestBody Profissional profissionalAtualizado) {
+        return repository.findById(id)
+                .map(profissional -> {
+                    profissional.setNome(profissionalAtualizado.getNome());
+                    profissional.setEspecialidade(profissionalAtualizado.getEspecialidade());
+                    profissional.setTelefone(profissionalAtualizado.getTelefone());
+                    return ResponseEntity.ok(repository.save(profissional));
+                })
+                .orElse(ResponseEntity.notFound().build());
+            } 
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletar(@PathVariable Long id) {
+        repository.deleteById(id);
     }
 }
