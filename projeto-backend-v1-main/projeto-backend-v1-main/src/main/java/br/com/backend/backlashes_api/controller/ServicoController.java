@@ -20,9 +20,32 @@ public class ServicoController {
         return repository.findAll();
     }
 
+   @GetMapping("/{id}")
+    public ResponseEntity<Servico> obter(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Servico criar(@RequestBody Servico servico) {
         return repository.save(servico);
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<Servico> atualizar(@PathVariable Long id, @RequestBody Servico servicoAtualizado) {
+        return repository.findById(id)
+                .map(servico -> {
+                    servico.setNome(servicoAtualizado.getNome());
+                    servico.setPreco(servicoAtualizado.getPreco());
+                    servico.setDescricao(servicoAtualizado.getDescricao());
+                    return ResponseEntity.ok(repository.save(servico));
+                })
+                .orElse(ResponseEntity.notFound().build());
+}
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletar(@PathVariable Long id) {
+        repository.deleteById(id);
     }
 }
