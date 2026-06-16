@@ -33,6 +33,18 @@ public class ClienteController {
                 .map(cliente -> ResponseEntity.ok(cliente))
                 .orElse(ResponseEntity.notFound().build());
     }
+    @PutMapping("/{id}") //atualiza cliente (PUT)
+    public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody Cliente clienteAtualizado) {
+        return repository.findById(id)
+                .map(cliente -> {
+                    cliente.setNome(clienteAtualizado.getNome());
+                    cliente.setEmail(clienteAtualizado.getEmail());
+                    cliente.setTelefone(clienteAtualizado.getTelefone());
+                    return ResponseEntity.ok(repository.save(cliente));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 
     @DeleteMapping("/{id}") //deleta cliente (DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
