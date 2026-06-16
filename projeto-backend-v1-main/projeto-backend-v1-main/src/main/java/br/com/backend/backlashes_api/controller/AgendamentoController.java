@@ -20,7 +20,12 @@ public class AgendamentoController {
     public List<Agendamento> listar() {
         return repository.findAll();
     }
-
+    @GetMapping("/{id}")
+    public ResponseEntity<Agendamento> buscar(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(agendamento -> ResponseEntity.ok(agendamento))
+                .orElse(ResponseEntity.notFound().build());
+    }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Agendamento criar(@RequestBody Agendamento agendamento) {
